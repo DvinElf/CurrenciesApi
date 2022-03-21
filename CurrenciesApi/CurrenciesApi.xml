@@ -1,0 +1,197 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CurrenciesApi</name>
+    </assembly>
+    <members>
+        <member name="T:CurrenciesApi.Controllers.CurrencyController">
+            <summary>
+            Главный контролер. Работает с Get-запросами, способен возвращать список курсов валют либо курс конкретной валюты.
+            </summary>
+        </member>
+        <member name="M:CurrenciesApi.Controllers.CurrencyController.#ctor(System.Net.Http.IHttpClientFactory)">
+            <summary>
+            В конструкторе контроллера передает HTTPClientFactory используемая для работы с HTTPClient через Dependency Injection
+            </summary>
+            <param name="clientFactory"></param>
+        </member>
+        <member name="M:CurrenciesApi.Controllers.CurrencyController.CurrenciesGet(System.Boolean,System.Int32,System.Int32)">
+            <summary>
+            Обработчик Get-запроса, возвращающий курсы валют по данным центробанка. Поддерживает пагинацию.
+            </summary>
+            <param name="pagination">Параметр, указывающий, нужна ли пагинация</param>
+            <param name="Page">Текущая страница при применении пагинации</param>
+            <param name="PageSize">Количество записей на странице</param>
+            <returns>
+            Возвращает курсы валют в формате JSON. В заголовках помещаются данные о последнем обновлении и пагинации.
+            </returns>
+        </member>
+        <member name="M:CurrenciesApi.Controllers.CurrencyController.CurrencyAsync(System.String)">
+            <summary>
+            Возвращает курс конкретной валюты.
+            </summary>
+            <param name="Code">CharCode необходимой валюты</param>
+            <returns>Возвращает курс выбранной валюты</returns>
+        </member>
+        <member name="M:CurrenciesApi.Controllers.CurrencyController.CheckCurrenciesAsunc">
+            <summary>
+            Метод, обращающийся к сайту центробанка и сохраняющий полученную информацию по курсам валют в singleton-объект
+            </summary>
+            /// <remarks>
+            Для экономии времени при повторных обращениях, а также ограниченной подстраховки на случай недоступности сайта центробанка, 
+            повторный запрос к центробанку происходит только раз в день, после обновления курсов, либо при запуске Api. 
+            </remarks>
+        </member>
+        <member name="T:CurrenciesApi.Models.Currencies">
+            <summary>
+            Singleton-объект, содержащий в себе список курсов валют, а также необходимые для работы с ним методы.
+            </summary>
+        </member>
+        <member name="M:CurrenciesApi.Models.Currencies.getInstance">
+            <summary>
+            Метод, позволяющий обращение к Singleton-объекту
+            </summary>
+        </member>
+        <member name="M:CurrenciesApi.Models.Currencies.GetCurrencies">
+            <summary>
+            Метод, возвращающий список курсов валют
+            </summary>
+            <returns>Спикос курсов валют</returns>
+        </member>
+        <member name="M:CurrenciesApi.Models.Currencies.GetCurrency(System.String)">
+            <summary>
+            Метод, возвращающий курс конкретной валюты по CharCode
+            </summary>
+            <param name="Code">CharCode валюты</param>
+            <returns>Курс выбранной валюты</returns>
+        </member>
+        <member name="M:CurrenciesApi.Models.Currencies.SetCurrencies(System.Collections.Generic.List{CurrenciesApi.Models.Currency})">
+            <summary>
+            Метод, задающий список курсов валют на основании JSon-файла
+            </summary>
+            <param name="tcurrencies">Список курсов валют</param>
+        </member>
+        <member name="M:CurrenciesApi.Models.Currencies.Pagination(System.Int32,System.Int32)">
+            <summary>
+            Метод, реализующий пагинацию списка курсов валют
+            </summary>
+            <param name="Page">Выбранная страница</param>
+            <param name="PageSize">Число объектов на странице</param>
+            <returns>Страницу с выбранным количеством курсов валют</returns>
+        </member>
+        <member name="M:CurrenciesApi.Models.Currencies.Pages(System.Int32)">
+            <summary>
+            Метод, возвращающий общее число страниц
+            </summary>
+            <param name="PageSize">Число объектов на странице</param>
+            <returns>Число страниц</returns>
+        </member>
+        <member name="T:CurrenciesApi.Models.Currency">
+            <summary>
+            Класс курса валюты
+            </summary>
+        </member>
+        <member name="P:CurrenciesApi.Models.Currency.ID">
+            <summary>
+            ID курса валюты
+            </summary>
+        </member>
+        <member name="P:CurrenciesApi.Models.Currency.NumCode">
+            <summary>
+            Циферный код курса валюты
+            </summary>
+        </member>
+        <member name="P:CurrenciesApi.Models.Currency.CharCode">
+            <summary>
+            Буквенный код курса валюты
+            </summary>
+        </member>
+        <member name="P:CurrenciesApi.Models.Currency.Nominal">
+            <summary>
+            Номинал валюты
+            </summary>
+        </member>
+        <member name="P:CurrenciesApi.Models.Currency.Name">
+            <summary>
+            Название валюты
+            </summary>
+        </member>
+        <member name="P:CurrenciesApi.Models.Currency.Value">
+            <summary>
+            Курс валюты
+            </summary>
+        </member>
+        <member name="P:CurrenciesApi.Models.Currency.Previous">
+            <summary>
+            Курс валюты за прошлый день
+            </summary>
+        </member>
+        <member name="T:CurrenciesApi.Models.UpdateTime">
+            <summary>
+            Singleton-объект, храанящий информацию о времени обновления данных 
+            </summary>
+        </member>
+        <member name="F:CurrenciesApi.Models.UpdateTime.LastUpdate">
+            <summary>
+            Время последнего запроса, производившего повторный запрос к сайту центробанка
+            </summary>
+        </member>
+        <member name="F:CurrenciesApi.Models.UpdateTime.DocTime">
+            <summary>
+            Время последнего обновления информации на сайте центробанка
+            </summary>
+        </member>
+        <member name="M:CurrenciesApi.Models.UpdateTime.getInstance">
+            <summary>
+            Метод, позволяющий обращение к Singleton-объекту
+            </summary>
+        </member>
+        <member name="T:CurrenciesApi.Program">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CurrenciesApi.Program.Main(System.String[])">
+            <summary>
+            
+            </summary>
+            <param name="args"></param>
+        </member>
+        <member name="M:CurrenciesApi.Program.CreateHostBuilder(System.String[])">
+            <summary>
+            
+            </summary>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="T:CurrenciesApi.Startup">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CurrenciesApi.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            
+            </summary>
+            <param name="configuration"></param>
+        </member>
+        <member name="P:CurrenciesApi.Startup.Configuration">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CurrenciesApi.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            
+            </summary>
+            <param name="services"></param>
+        </member>
+        <member name="M:CurrenciesApi.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            
+            </summary>
+            <param name="app"></param>
+            <param name="env"></param>
+        </member>
+    </members>
+</doc>
